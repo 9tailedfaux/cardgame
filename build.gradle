@@ -1,0 +1,45 @@
+apply plugin: 'application'
+
+mainClassName = 'MainKt'
+
+// (1)
+buildscript {
+    // Serves as a global variable
+    ext.kotlin_version = '1.6.10'
+    // Defines where we get our dependencies
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // Retrieves the Kotlin gradle plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+// (2)
+apply plugin: 'kotlin'
+// (3)
+repositories {
+    mavenCentral()
+}
+// (4)
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'MainKt'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+run {
+    standardInput = System.in
+}
